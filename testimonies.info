@@ -1,0 +1,8 @@
+name = Testimonies (system)
+description = "Testimonies base module."
+core = 7.x
+package = BryterDigital
+dependencies[] = system (>=7.38)
+dependencies[] = utils
+version = 0.18032701
+configure = admin/config/testimonies/settings

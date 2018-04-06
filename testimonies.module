@@ -1,0 +1,507 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Jonathan Tarrant
+ * Date: 04/08/2015
+ * Time: 10:55
+ */
+//
+//if (!defined("CREDITS_VERSION")) {
+//    define(
+//        'CREDITS_VERSION',
+//        '0.18032701'
+//    );
+//}
+//
+if (!defined("TESTIMONIES_ROOT_PATH")) {
+    define(
+        'TESTIMONIES_ROOT_PATH',
+        dirname(__FILE__)
+    );
+}
+
+if (! defined("TESTIMONIES_TEMPLATE_PATH")) {
+    define(
+        'TESTIMONIES_TEMPLATE_PATH',
+        TESTIMONIES_ROOT_PATH
+        . DIRECTORY_SEPARATOR . 'templates'
+    );
+}
+
+//
+//if (!defined("CREDITS_JS_PATH")) {
+//    define(
+//        'CREDITS_JS_PATH',
+//        CREDITS_ROOT_PATH
+//        . DIRECTORY_SEPARATOR . 'js'
+//    );
+//}
+//
+//if (!defined("COOKIECONSENT_CSS_PATH")) {
+//    define(
+//        'CREDITS_CSS_PATH',
+//        CREDITS_ROOT_PATH
+//        . DIRECTORY_SEPARATOR . 'css'
+//    );
+//}
+
+
+function testimonies_boot() {
+//    require_once( CREDITS_ROOT_PATH . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR . 'autoloader.php');
+}
+
+/**
+ * implements hook_menu()
+ */
+function testimonies_menu() {
+
+    $items['admin/config/testimonies/settings'] = array(
+        'title' => 'Testimonies',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('_testimonies_settings_form'),
+        'access arguments' => array('administer site configuration'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    
+    $items['admin/config/testimonies/debug'] = array(
+        'page callback' => '_testimonies_debug_view',
+        'page arguments' => array(),
+        'access arguments' => array('administer site configuration'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    return $items;
+}
+
+function testimonies_init() {
+
+
+}
+
+//function credits_cron() {
+//
+//    $unassignedOrder = \Bryter\Credits\Credits::getOrdersCompletedWithoutLog();
+//
+//    foreach ($unassignedOrder as $order) {
+//
+//        \Bryter\Credits\Credits::giveCredits(
+//            $order->uid,
+//            $order->product_count,
+//            array(
+//                'orderid' => $order->order_id
+//            )
+//        );
+//
+//    }
+//
+//    return true;
+//}
+
+function _testimonies_settings_form() {
+
+    // https://api.drupal.org/api/drupal/developer%21topics%21forms_api_reference.html/7.x
+
+    $form = array();
+    
+    /**
+     * Message Settings
+     */
+    $form['general_settings'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('General Settings'),
+        '#collapsible' => TRUE, // Added
+        '#collapsed' => FALSE,  // Added
+    );
+
+    $form['general_settings']['testimonies_enabled'] = array(
+        '#type' => 'select'
+    ,'#title' => t('Enabled?')
+    ,'#options' => array(
+            0 => t('Disabled')
+            ,1 => t('Enabled')
+        )
+    ,'#default_value' => variable_get(
+            'testimonies_enabled'
+            ,0
+        )
+    ,'#description' => t(''),
+    );
+//
+//    $form['general_settings']['cookieconsent_position'] = array(
+//        '#type' => 'select'
+//    ,'#title' => t('Cookie Consent Position')
+//    ,'#options' => array(
+//            'bottom' => t('Banner bottom'),
+//            'top' => t('Banner top'),
+//            'top-static' => t('Banner top (pushdown)'),
+//            'bottom-left' => t('Floating left'),
+//            'bottom-right' => t('Floating right'),
+//        )
+//    ,'#default_value' => variable_get(
+//            'cookieconsent_position'
+//            ,'bottom'
+//        )
+//    ,'#description' => t(''),
+//    );
+//
+//
+//    $form['message_settings'] = array(
+//        '#type' => 'fieldset',
+//        '#title' => t('Message Settings'),
+//        '#collapsible' => TRUE, // Added
+//        '#collapsed' => FALSE,  // Added
+//    );
+//
+//    $form['message_settings']['cookieconsent_content_message'] = array(
+//        '#type' => 'textarea'
+//        ,'#title' => t('Message')
+//        ,'#rows' => 6
+//        ,'#required' => TRUE
+//        ,'#default_value' => variable_get(
+//            'cookieconsent_content_message'
+//            ,t(COOKIECONSENT_C_M_DEFAULT)
+//        )
+//        ,'#description' => t('')
+//    );
+//
+//    $randomId = rand();
+//    $inputId1 = 'hexcolor_' . $randomId;
+//    $inputId2 = 'colorpicker_' . $randomId;
+//    $defaultColor = variable_get(
+//        'cookieconsent_content_bg_colour'
+//        ,t('#090909')
+//    );
+//    $form['message_settings']['cookieconsent_content_bg_colour'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Message Background Colour')
+//        ,'#maxlength' => 7
+//        ,'#required' => TRUE
+//        ,'#default_value' => $defaultColor
+//        ,'#description' => t('')
+//        ,'#attributes' => array(
+//            'class' => array($inputId1)
+//            ,'pattern' => "^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//            ,'style' => "display:inline-block;"
+//        )
+//    );
+//    $form['message_settings']['cookieconsent_content_bg_colour_picker'] = array(
+//        '#markup' => '
+//            <input type="color"
+//                class="'.$inputId2.'"
+//                style="display:inline-block;"
+//                name="color"
+//                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//                value="'. $defaultColor .'">
+//        ',
+//    );
+//    drupal_add_js("
+//            jQuery('.{$inputId2}').on('change', function() {
+//                jQuery('.{$inputId1}').val(this.value);
+//            });
+//            jQuery('.{$inputId1}').on('change', function() {
+//                jQuery('.{$inputId2}').val(this.value);
+//            });
+//        ", [
+//        'type' => 'inline',
+//        'scope' => 'footer',
+//        'group' => JS_DEFAULT,
+//        'every_page' => FALSE,
+//        'weight' => 10,
+//        'requires_jquery' => true
+//    ]);
+//
+//    $randomId = rand();
+//    $inputId1 = 'hexcolor_' . $randomId;
+//    $inputId2 = 'colorpicker_' . $randomId;
+//    $defaultColor = variable_get(
+//        'cookieconsent_content_text_colour'
+//        ,t('#f7f9f9')
+//    );
+//    $form['message_settings']['cookieconsent_content_text_colour'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Message Text Colour')
+//        ,'#maxlength' => 7
+//        ,'#required' => TRUE
+//        ,'#default_value' => $defaultColor
+//        ,'#description' => t('')
+//        ,'#attributes' => array(
+//            'class' => array($inputId1)
+//            ,'pattern' => "^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//            ,'style' => "display:inline-block;"
+//        )
+//    );
+//    $form['message_settings']['cookieconsent_content_text_colour_picker'] = array(
+//        '#markup' => '
+//            <input type="color"
+//                class="'.$inputId2.'"
+//                style="display:inline-block;"
+//                name="color"
+//                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//                value="'. $defaultColor .'">
+//        ',
+//    );
+//    drupal_add_js("
+//            jQuery('.{$inputId2}').on('change', function() {
+//                jQuery('.{$inputId1}').val(this.value);
+//            });
+//            jQuery('.{$inputId1}').on('change', function() {
+//                jQuery('.{$inputId2}').val(this.value);
+//            });
+//        ", [
+//        'type' => 'inline',
+//        'scope' => 'footer',
+//        'group' => JS_DEFAULT,
+//        'every_page' => FALSE,
+//        'weight' => 10,
+//        'requires_jquery' => true
+//    ]);
+//
+//
+//    /**
+//     * Document Settings
+//     */
+//    $form['cookiedoc_settings'] = array(
+//        '#type' => 'fieldset',
+//        '#title' => t('Document Settings'),
+//        '#collapsible' => TRUE, // Added
+//        '#collapsed' => TRUE,  // Added
+//    );
+//
+//    $form['cookiedoc_settings']['cookieconsent_content_cookiedoc_text'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Document Link Text')
+//        ,'#maxlength' => 64
+//        ,'#required' => TRUE
+//        ,'#default_value' => variable_get(
+//                'cookieconsent_content_cookiedoc_text'
+//                ,t('Learn more...')
+//            )
+//        ,'#description' => t('')
+//    );
+//
+//    $form['cookiedoc_settings']['cookieconsent_content_cookiedoc_link'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Document Link URL')
+//        ,'#maxlength' => 144
+//        ,'#required' => TRUE
+//        ,'#default_value' => variable_get(
+//                'cookieconsent_content_cookiedoc_link'
+//                ,t('https://cookiesandyou.com/')
+//            )
+//        ,'#description' => t('')
+//    );
+//
+//
+//    /**
+//     * Dismiss Settings
+//     */
+//    $form['dismiss_settings'] = array(
+//        '#type' => 'fieldset',
+//        '#title' => t('Dismiss Settings'),
+//        '#collapsible' => TRUE, // Added
+//        '#collapsed' => TRUE,  // Added
+//    );
+//
+//    $form['dismiss_settings']['cookieconsent_dismiss_text'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Dismiss Text')
+//        ,'#maxlength' => 64
+//        ,'#required' => TRUE
+//        ,'#default_value' => variable_get(
+//                'cookieconsent_dismiss_text'
+//                ,t('Accept!')
+//            )
+//        ,'#description' => t('')
+//    );
+//
+//    $randomId = rand();
+//    $inputId1 = 'hexcolor_' . $randomId;
+//    $inputId2 = 'colorpicker_' . $randomId;
+//    $defaultColor = variable_get(
+//        'cookieconsent_dismiss_bg_colour'
+//        ,t('#FFC107')
+//    );
+//    $form['dismiss_settings']['cookieconsent_dismiss_bg_colour'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Dismiss Background Colour')
+//        ,'#maxlength' => 7
+//        ,'#required' => TRUE
+//        ,'#default_value' => $defaultColor
+//        ,'#description' => t('')
+//        ,'#attributes' => array(
+//            'class' => array($inputId1)
+//            ,'pattern' => "^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//            ,'style' => "display:inline-block;"
+//        )
+//    );
+//    $form['dismiss_settings']['cookieconsent_dismiss_bg_colour_picker'] = array(
+//        '#markup' => '
+//            <input type="color"
+//                class="'.$inputId2.'"
+//                style="display:inline-block;"
+//                name="color"
+//                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//                value="'. $defaultColor .'">
+//        ',
+//    );
+//    drupal_add_js("
+//            jQuery('.{$inputId2}').on('change', function() {
+//                jQuery('.{$inputId1}').val(this.value);
+//            });
+//            jQuery('.{$inputId1}').on('change', function() {
+//                jQuery('.{$inputId2}').val(this.value);
+//            });
+//        ", [
+//        'type' => 'inline',
+//        'scope' => 'footer',
+//        'group' => JS_DEFAULT,
+//        'every_page' => FALSE,
+//        'weight' => 10,
+//        'requires_jquery' => true
+//    ]);
+//
+//    $randomId = rand();
+//    $inputId1 = 'hexcolor_' . $randomId;
+//    $inputId2 = 'colorpicker_' . $randomId;
+//    $defaultColor = variable_get(
+//        'cookieconsent_dismiss_text_colour'
+//        ,t('#171717')
+//    );
+//    $form['dismiss_settings']['cookieconsent_dismiss_text_colour'] = array(
+//        '#type' => 'textfield'
+//        ,'#title' => t('Dismiss Text Colour')
+//        ,'#maxlength' => 7
+//        ,'#required' => TRUE
+//        ,'#default_value' => $defaultColor
+//        ,'#description' => t('')
+//        ,'#attributes' => array(
+//            'class' => array($inputId1)
+//            ,'pattern' => "^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//            ,'style' => "display:inline-block;"
+//        )
+//    );
+//    $form['dismiss_settings']['cookieconsent_dismiss_text_colour_picker'] = array(
+//        '#markup' => '
+//            <input type="color"
+//                class="'.$inputId2.'"
+//                style="display:inline-block;"
+//                name="color"
+//                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+//                value="'. $defaultColor .'">
+//        ',
+//    );
+//    drupal_add_js("
+//            jQuery('.{$inputId2}').on('change', function() {
+//                jQuery('.{$inputId1}').val(this.value);
+//            });
+//            jQuery('.{$inputId1}').on('change', function() {
+//                jQuery('.{$inputId2}').val(this.value);
+//            });
+//        ", [
+//        'type' => 'inline',
+//        'scope' => 'footer',
+//        'group' => JS_DEFAULT,
+//        'every_page' => FALSE,
+//        'weight' => 10,
+//        'requires_jquery' => true
+//    ]);
+    
+    return system_settings_form($form);
+}
+
+function _testimonies_debug_view() {
+
+//    Utils::debug(
+//        '_testimonies_debug_view()',
+//        true
+//    );
+
+//    Utils::debug(
+//        '_testimonies_get_testimonies()'
+//    );
+//
+//    Utils::debug(
+//        _testimonies_get_testimonies(1),
+//        true
+//    );
+    
+    Utils::debug(
+        _testimonies_render_carousel(),
+        true
+    );
+
+}
+
+function _testimonies_get_testimonies($limit = 20, $offset = 0, $page = 1, $args = array()) {
+
+    // Query
+    $query = db_select('node', 'n')
+        ->condition( 'n.type', 'testimony', '=' )
+        ->condition( 'n.status', '1', '=' );
+    $query->addField(
+        'n', 'nid'
+    );
+    $query->addField(
+        'n', 'title'
+    );
+
+    // Join Body
+    $query->leftjoin(
+        'field_data_body',
+        'fdb',
+        'n.nid = fdb.entity_id'
+    );
+    $query->addField('fdb', 'body_value');
+
+    $query->innerJoin(
+        'field_data_field_email',
+        'fdfe',
+        'n.nid = fdfe.entity_id'
+    );
+    $query->addField('fdfe', 'field_email_value');
+
+    $query->innerJoin(
+        'field_data_field_job_description',
+        'fdfjd',
+        'n.nid = fdfjd.entity_id'
+    );
+    $query->addField('fdfjd', 'field_job_description_value');
+    // End
+
+    // Range
+    $query->range(
+        (($page - 1 ) * $limit) + $offset,
+        $limit
+    );
+
+    // Order By
+    $query->orderBy(
+        'n.created',
+        'DESC'
+    );
+
+    // Query Run
+    $resultsArray = $query
+        //->distinct()
+        ->execute()
+        ->fetchAllAssoc('nid', PDO::FETCH_ASSOC);
+
+    return $resultsArray;
+
+}
+
+function _testimonies_render_carousel($data = NULL) {
+
+    if (is_null($data))
+        $data = _testimonies_get_testimonies();
+
+    return Utils::twigRenderTemplate(
+        'item.twig',
+        $data,
+        TESTIMONIES_TEMPLATE_PATH
+    );
+}
+
+//function _fdis_version() {
+////    return CREDITS_VERSION;
+//}

@@ -1,0 +1,25 @@
+<h1>Item Twig</h1>
+{#<?php $initialFlag = false; ?>#}
+{#<?php foreach(_testimonies_get_testimonies(1) as $key => $item): ?>#}
+
+{#<div class="item <?php if(!$initialFlag) { echo 'active'; $initialFlag = true; }  ?>">#}
+    {#<div class="row top-bar">#}
+        {#<div class="col-sm-2">#}
+            {#<img src=<?php echo Utils::getGravatar($item["field_email_value"]); ?> class="img-responsive" style="width: 80px">#}
+        {#</div>#}
+        {#<div class="col-sm-10">#}
+            {#<h4 class="testimonial-name"><strong><?php echo $item["title"]; ?></strong></h4>#}
+            {#<p class="testimonial_subtitle"><?php echo nl2br($item["field_job_description_value"]); ?>#}
+            {#</p>#}
+        {#</div>#}
+    {#</div>#}
+    {#<div class="row" style="padding: 20px">#}
+        {#<!--                                <button style="border: none;"><i class="fa fa-quote-left testimonial_fa" aria-hidden="true"></i></button>-->#}
+        {#<p class="testimonial_para">#}
+            {#<?php echo $item["body_value"]; ?>#}
+        {#</p>#}
+        {#<br />#}
+    {#</div>#}
+{#</div>#}
+
+{#<?php endforeach; ?>#}
