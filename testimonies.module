@@ -505,3 +505,37 @@ function _testimonies_render_carousel($data = NULL) {
 //function _fdis_version() {
 ////    return CREDITS_VERSION;
 //}
+
+/**
+ * Implements hook_block_info().
+ */
+function testimonies_block_info() {
+
+    $blocks['testimonies_carousel_block'] = array(
+        'info' => t('Testimonies Carousel Block: block'),
+        'status' => TRUE,
+        'visibility' => BLOCK_VISIBILITY_NOTLISTED,
+        'region' => 'testimonies_one',
+    );
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function testimonies_block_view($delta = '') {
+
+    switch ($delta) {
+        case 'testimonies_carousel_block':
+            $block['subject'] = t("Testimonies Carousel Block");
+            $block['content'] = _testimonies_carousel_block_contents($delta);
+            break;
+    }
+
+    return $block;
+}
+
+function _testimonies_carousel_block_contents($which_blocks) {
+    return _testimonies_render_carousel();
+}
